@@ -25,6 +25,12 @@ io.on('connection', (socket) => {
         });
         socket.data.userId = user.id;
         console.log(`${username} joined the chat`);
+        const messages = await Message.findAll({
+            limit: 20,
+            include: [{ model: User, attributes: ['username'] }],
+            order: [['createdAt', 'ASC']]
+        });
+        socket.emit(`chat history`, messages);
     } catch (error) {
         console.error('Error joining chat:', error);
     }
