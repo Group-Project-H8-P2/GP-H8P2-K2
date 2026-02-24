@@ -29,6 +29,23 @@ io.on('connection', (socket) => {
         console.error('Error joining chat:', error);
     }
     });
+
+    socket.on(`chat message`, async (msg) => {
+        try {
+            const userId = socket.data.userId;
+            const newMessage = await Message.create({
+                content: msg,
+                UserId: userId
+            });
+            const messageWithUser = await Message.findByPk(newMessage.id, {
+                include: User
+            });
+            io.emit(`chat message`, messageWithUser);
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    });
+
 });
 
 server.listen(3000, () => {
