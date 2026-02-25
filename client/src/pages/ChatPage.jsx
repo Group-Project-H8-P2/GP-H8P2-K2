@@ -18,7 +18,6 @@ export default function ChatPage() {
 
   const chatRef = useRef(null);
 
-  // 🔥 SMART AUTO SCROLL
   const isUserNearBottom = () => {
     const el = chatRef.current;
     if (!el) return false;
