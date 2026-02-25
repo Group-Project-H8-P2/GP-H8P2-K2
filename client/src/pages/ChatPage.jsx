@@ -65,7 +65,6 @@ export default function ChatPage() {
     };
   }, [username]);
 
-  // 🕒 TIMESTAMP FORMAT
   const formatTime = (date) => {
     return new Intl.DateTimeFormat("id-ID", {
       hour: "2-digit",
@@ -130,21 +129,17 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen bg-[#313338] text-white">
-      {/* Sidebar */}
       <div className="w-60 bg-[#2b2d31] p-4 border-r border-[#1e1f22]">
         <h2 className="text-xl font-bold mb-6">💬 ChatRoom</h2>
         <p className="text-sm text-gray-400">Logged in as:</p>
         <p className="font-semibold text-blue-400">{username}</p>
       </div>
 
-      {/* Main */}
       <div className="flex flex-col flex-1">
-        {/* Header */}
         <div className="h-14 flex items-center px-6 border-b border-[#1e1f22] bg-[#2b2d31]">
           <h1 className="text-lg font-semibold">General Chat</h1>
         </div>
 
-        {/* Messages */}
         <div
           ref={chatRef}
           className="flex-1 overflow-y-auto p-6 space-y-4"
@@ -171,7 +166,7 @@ export default function ChatPage() {
                   </p>
 
                   {msg.content && (
-                    <p className="whitespace-pre-wrap break-words">
+                    <p className="whitespace-pre-wrap wrap-break-word">
                       {msg.content}
                     </p>
                   )}
@@ -184,7 +179,6 @@ export default function ChatPage() {
                     />
                   )}
 
-                  {/* TIMESTAMP */}
                   <div className="text-right mt-1">
                     <span
                       className="text-[10px] text-gray-300 opacity-70"
@@ -198,7 +192,6 @@ export default function ChatPage() {
             );
           })}
 
-          {/* AI Loading Bubble */}
           {aiLoading && (
             <div className="flex justify-start animate-fadeIn">
               <div className="bg-[#404249] px-4 py-3 rounded-2xl rounded-bl-none shadow-md">
@@ -211,7 +204,6 @@ export default function ChatPage() {
             </div>
           )}
 
-          {/* Typing Indicator */}
           {typingUser && (
             <div className="text-sm text-gray-400 italic animate-pulse">
               {typingUser} is typing...
@@ -219,7 +211,6 @@ export default function ChatPage() {
           )}
         </div>
 
-        {/* Input Area */}
         <div className="p-4 border-t border-[#1e1f22] bg-[#2b2d31] flex flex-col gap-2">
           {preview && (
             <div className="relative w-32">
