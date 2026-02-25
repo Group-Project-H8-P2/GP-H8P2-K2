@@ -16,10 +16,22 @@ export default function ChatPage() {
   const [typingUser, setTypingUser] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
 
-  const bottomRef = useRef(null);
+  const chatRef = useRef(null);
+
+  // 🔥 SMART AUTO SCROLL
+  const isUserNearBottom = () => {
+    const el = chatRef.current;
+    if (!el) return false;
+    return el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+  };
 
   const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = chatRef.current;
+    if (!el) return;
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   useEffect(() => {
@@ -31,7 +43,12 @@ export default function ChatPage() {
     socket.on("chat message", (message) => {
       setMessages((prev) => [...prev, message]);
       setAiLoading(false);
-      setTimeout(scrollToBottom, 100);
+
+      setTimeout(() => {
+        if (isUserNearBottom()) {
+          scrollToBottom();
+        }
+      }, 100);
     });
 
     socket.on("typing", (user) => {
@@ -47,6 +64,20 @@ export default function ChatPage() {
       socket.off("typing");
     };
   }, [username]);
+
+  const formatTime = (date) => {
+    return new Intl.DateTimeFormat("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(date));
+  };
+
+  const formatFullDate = (date) => {
+    return new Intl.DateTimeFormat("id-ID", {
+      dateStyle: "full",
+      timeStyle: "short",
+    }).format(new Date(date));
+  };
 
   const uploadImage = async (file) => {
     const formData = new FormData();
@@ -109,7 +140,10 @@ export default function ChatPage() {
           <h1 className="text-lg font-semibold">General Chat</h1>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div
+          ref={chatRef}
+          className="flex-1 overflow-y-auto p-6 space-y-4"
+        >
           {messages.map((msg) => {
             const isMe = msg.User?.username === username;
 
@@ -121,7 +155,7 @@ export default function ChatPage() {
                 } animate-fadeIn`}
               >
                 <div
-                  className={`max-w-md px-4 py-3 rounded-2xl shadow-md ${
+                  className={`max-w-md px-4 py-3 rounded-2xl shadow-md transition-all duration-200 hover:scale-[1.02] ${
                     isMe
                       ? "bg-blue-600 rounded-br-none"
                       : "bg-[#404249] rounded-bl-none"
@@ -132,7 +166,7 @@ export default function ChatPage() {
                   </p>
 
                   {msg.content && (
-                    <p className="wrap-break-word whitespace-pre-wrap">
+                    <p className="whitespace-pre-wrap wrap-break-word">
                       {msg.content}
                     </p>
                   )}
@@ -144,6 +178,15 @@ export default function ChatPage() {
                       className="mt-2 rounded-lg max-h-60"
                     />
                   )}
+
+                  <div className="text-right mt-1">
+                    <span
+                      className="text-[10px] text-gray-300 opacity-70"
+                      title={formatFullDate(msg.createdAt)}
+                    >
+                      {formatTime(msg.createdAt)}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
@@ -166,8 +209,6 @@ export default function ChatPage() {
               {typingUser} is typing...
             </div>
           )}
-
-          <div ref={bottomRef} />
         </div>
 
         <div className="p-4 border-t border-[#1e1f22] bg-[#2b2d31] flex flex-col gap-2">
