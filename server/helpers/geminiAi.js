@@ -7,43 +7,53 @@ const ai = new GoogleGenAI({
 });
 
 async function generatedText(message) {
-    try {
-        const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: `Kamu adalah ai yang membantu semua pertanyaan 
-          yang diberikan oleh user,jawab singkat dan jelas
-          user: ${message}`,
-        });
-        return (response.text);
-        
-    } catch (error) {
-        console.log(error);
-        
-    }
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `Kamu adalah ai yang membantu semua pertanyaan 
+      yang diberikan oleh user, jawab singkat dan jelas.
+      user: ${message}`,
+    });
+
+    const text = response.candidates?.[0]?.content?.parts
+      ?.map((part) => part.text)
+      .join("") || "Maaf, saya tidak bisa menjawab.";
+
+    return text;
+
+  } catch (error) {
+    console.log(error);
+    return "Terjadi kesalahan saat generate AI.";
+  }
 }
 
-async function generatedFromImage(imageUrl,text) {
-    try {
-        const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents:[
-            {
-                fileData: {
-                    fileUri: imageUrl,
-                    mimeType: "image/jpeg"
-                }
-            },
-            {
-                text: `Jawab pertanyaan berikut berdasarkan gambar yang diberikan dan
-                maksimal 20 kata: ${text}`
-            }
-          ]
-        });
-        return (response.text);
-    } catch (error) {
-        console.log(error);
-        
-    }
+async function generatedFromImage(imageUrl, text) {
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        {
+          fileData: {
+            fileUri: imageUrl,
+            mimeType: "image/jpeg",
+          },
+        },
+        {
+          text: `Jawab pertanyaan berikut berdasarkan gambar dan maksimal 20 kata: ${text}`,
+        },
+      ],
+    });
+
+    const aiText = response.candidates?.[0]?.content?.parts
+      ?.map((part) => part.text)
+      .join("") || "Maaf, saya tidak bisa menganalisa gambar.";
+
+    return aiText;
+
+  } catch (error) {
+    console.log(error);
+    return "Terjadi kesalahan saat analisa gambar.";
+  }
 }
 
 module.exports = { generatedText, generatedFromImage };
