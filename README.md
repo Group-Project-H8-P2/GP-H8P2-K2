@@ -1,4 +1,4 @@
-# 💬 Realtime Chat App (Discord-Style UI + AI Integration)
+# 💬 Realtime Chat App
 
 This is a group project for Hacktiv8.
 
