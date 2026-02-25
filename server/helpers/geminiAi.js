@@ -1,9 +1,9 @@
 const { GoogleGenAI } = require("@google/genai");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 
 const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_GENAI_API_KEY,
+  apiKey: process.env.GOOGLE_GENAI_API_KEY,
 });
 
 async function generatedText(message) {
@@ -15,12 +15,12 @@ async function generatedText(message) {
       user: ${message}`,
     });
 
-    const text = response.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text)
-      .join("") || "Maaf, saya tidak bisa menjawab.";
+    const text =
+      response.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text)
+        .join("") || "Maaf, saya tidak bisa menjawab.";
 
     return text;
-
   } catch (error) {
     console.log(error);
     return "Terjadi kesalahan saat generate AI.";
@@ -44,12 +44,12 @@ async function generatedFromImage(imageUrl, text) {
       ],
     });
 
-    const aiText = response.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text)
-      .join("") || "Maaf, saya tidak bisa menganalisa gambar.";
+    const aiText =
+      response.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text)
+        .join("") || "Maaf, saya tidak bisa menganalisa gambar.";
 
     return aiText;
-
   } catch (error) {
     console.log(error);
     return "Terjadi kesalahan saat analisa gambar.";
