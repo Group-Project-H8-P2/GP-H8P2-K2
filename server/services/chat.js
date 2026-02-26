@@ -9,12 +9,12 @@ async function handleJoin(username) {
   const messages = await Message.findAll({
     limit: 20,
     include: [{ model: User, attributes: ["username"] }],
-    order: [["createdAt", "ASC"]],
+    order: [["createdAt", "DESC"]],
   });
 
   return {
     userId: user.id,
-    messages,
+    messages: messages.reverse(),
   };
 }
 
