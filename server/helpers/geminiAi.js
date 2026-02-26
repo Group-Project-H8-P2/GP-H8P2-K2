@@ -56,4 +56,37 @@ async function generatedFromImage(imageUrl, text) {
   }
 }
 
-module.exports = { generatedText, generatedFromImage };
+async function generateSummary(messages, count) {
+  try {
+    // Format messages as a conversation transcript
+    const transcript = messages
+      .map((msg) => {
+        const username = msg.User?.username || "Unknown";
+        const content = msg.imageUrl ? "[sent an image]" : msg.content;
+        return `${username}: ${content}`;
+      })
+      .join("\n");
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `Kamu adalah ai yang merangkum percakapan chat. 
+Berikut adalah ${count} pesan terakhir dari chat:
+
+${transcript}
+
+Buatlah ringkasan singkat dari percakapan di atas dalam 2-3 kalimat yang jelas dan informatif dalam bahasa Indonesia.`,
+    });
+
+    const summary =
+      response.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text)
+        .join("") || "Maaf, saya tidak bisa membuat ringkasan.";
+
+    return summary;
+  } catch (error) {
+    console.log(error);
+    return "Terjadi kesalahan saat membuat ringkasan.";
+  }
+}
+
+module.exports = { generatedText, generatedFromImage, generateSummary };
