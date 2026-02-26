@@ -185,7 +185,7 @@ export default function ChatPage() {
                   </p>
 
                   {msg.content && (
-                    <p className="whitespace-pre-wrap break-words">
+                    <p className="whitespace-pre-wrap wrap-break-word">
                       {msg.content}
                     </p>
                   )}
