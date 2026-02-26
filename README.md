@@ -96,29 +96,6 @@ BASE_URL
 
 ---
 
-## 🔹 Event: `chat history`
-
-### Description
-Automatically sent by server when client connects.  
-Contains full chat history.
-
-### Example Response
-```json
-[
-  {
-    "id": 1,
-    "content": "Hello world",
-    "imageUrl": null,
-    "createdAt": "2026-02-25T10:00:00.000Z",
-    "User": {
-      "username": "Vincent"
-    }
-  }
-]
-```
-
----
-
 ## 🔹 Event: `chat message`
 
 ### Emit (Client → Server)
@@ -141,22 +118,6 @@ Contains full chat history.
   }
 }
 ```
-
----
-
-## 🔹 Event: `typing`
-
-### Emit (Client → Server)
-```json
-"Vincent"
-```
-
-### Broadcast (Server → Other Clients)
-```json
-"Vincent"
-```
-
-Used to display typing indicator.
 
 ---
 
