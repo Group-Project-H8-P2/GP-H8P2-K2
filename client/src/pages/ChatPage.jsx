@@ -15,6 +15,7 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [typingUser, setTypingUser] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const chatRef = useRef(null);
 
@@ -34,6 +35,25 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
+    const el = chatRef.current;
+    if (!el) return;
+
+    const handleScroll = () => {
+      const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+
+      setShowScrollButton(!nearBottom);
+    };
+
+    el.addEventListener("scroll", handleScroll);
+
+    return () => {
+      el.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.emit("join", username);
+
     socket.on("chat history", (history) => {
       setMessages(history);
       setTimeout(scrollToBottom, 100);
@@ -41,7 +61,10 @@ export default function ChatPage() {
 
     socket.on("chat message", (message) => {
       setMessages((prev) => [...prev, message]);
-      setAiLoading(false);
+
+      if (message.User?.username === "BotAI") {
+        setAiLoading(false);
+      }
 
       setTimeout(() => {
         if (isUserNearBottom()) {
@@ -134,15 +157,12 @@ export default function ChatPage() {
         <p className="font-semibold text-blue-400">{username}</p>
       </div>
 
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 relative">
         <div className="h-14 flex items-center px-6 border-b border-[#1e1f22] bg-[#2b2d31]">
           <h1 className="text-lg font-semibold">General Chat</h1>
         </div>
 
-        <div
-          ref={chatRef}
-          className="flex-1 overflow-y-auto p-6 space-y-4"
-        >
+        <div ref={chatRef} className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.map((msg) => {
             const isMe = msg.User?.username === username;
 
@@ -209,6 +229,21 @@ export default function ChatPage() {
             </div>
           )}
         </div>
+
+        {showScrollButton && (
+          <button
+            onClick={scrollToBottom}
+            className="absolute bottom-24 right-8 
+                       bg-blue-600 hover:bg-blue-700 
+                       p-3 rounded-full shadow-lg 
+                       transition-all duration-300 
+                       opacity-90 hover:opacity-100 
+                       hover:scale-110
+                       cursor-pointer"
+          >
+            ▼
+          </button>
+        )}
 
         <div className="p-4 border-t border-[#1e1f22] bg-[#2b2d31] flex flex-col gap-2">
           {preview && (
