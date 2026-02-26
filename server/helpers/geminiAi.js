@@ -58,7 +58,7 @@ async function generatedFromImage(imageUrl, text) {
 
 async function generateSummary(messages, count) {
   try {
-    // Format messages as a conversation transcript
+   
     const transcript = messages
       .map((msg) => {
         const username = msg.User?.username || "Unknown";
